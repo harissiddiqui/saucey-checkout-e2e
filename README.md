@@ -32,6 +32,8 @@ saucey-checkout-e2e/
 - **`data-test` attribute selectors only**: SauceDemo exposes `data-test` attributes specifically for automation. These are far more stable than CSS classes or visible text, which are more likely to change with styling or copy edits.
 - **No hard-coded waits**: every assertion relies on Playwright's built-in web-first waiting (`expect(locator).toHaveText(...)`, `toHaveURL(...)`, etc.) rather than `waitForTimeout`. See `ai-prompts-log.md` for a case where an AI-generated hard-coded wait was caught and removed.
 - **Step-level assertions**: the test checks the URL at every checkout step, not just the final confirmation message, so a failure points to the exact step that broke.
+- **Price and tax verification**: the happy-path test confirms subtotal + tax equals the displayed total on the checkout overview page, not just that a total is present.
+- **Cross-browser**: the suite runs against Chromium, Firefox, and WebKit via separate Playwright projects.
 
 ## Setup
 
@@ -47,8 +49,16 @@ saucey-checkout-e2e/
 
 ## Running the tests
 
+Run against all three configured browsers:
 ```
 npm test
+```
+
+Run against a single browser:
+```
+npx playwright test --project=chromium
+npx playwright test --project=firefox
+npx playwright test --project=webkit
 ```
 
 Run with a visible browser window:
