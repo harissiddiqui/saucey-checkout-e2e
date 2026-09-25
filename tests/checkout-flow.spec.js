@@ -29,6 +29,10 @@ test.describe('SauceDemo checkout flow', () => {
     await checkoutPage.fillInfo(checkoutInfo.firstName, checkoutInfo.lastName, checkoutInfo.postalCode);
     await expect(page).toHaveURL(/checkout-step-two\.html/);
 
+    const { subtotal, tax, total } = await checkoutPage.getPriceBreakdown();
+    expect(subtotal).toBeGreaterThan(0);
+    expect(Math.round((subtotal + tax) * 100) / 100).toBeCloseTo(total, 2);
+
     await checkoutPage.finish();
     await expect(page).toHaveURL(/checkout-complete\.html/);
     await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
@@ -47,7 +51,7 @@ test.describe('SauceDemo checkout flow', () => {
     await cartPage.checkout();
 
     await checkoutPage.continueButton.click();
-    await expect(checkoutPage.page.locator('[data-test="error"]')).toBeVisible();
+    await expect(checkoutPage.errorMessage).toBeVisible();
     await expect(page).toHaveURL(/checkout-step-one\.html/);
   });
 });
